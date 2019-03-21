@@ -1,0 +1,62 @@
+[Service]
+  Host = "localhost"
+  Port = 49992
+  Timeout = 5000
+  ConnectRetries = 3
+  StartupMsg = "J1939 device started"
+  ReadMaxLimit = 256
+  CheckInterval = "10s"
+
+[Clients]
+  [Clients.Data]
+    Host = "localhost"
+    Port = 48080
+
+  [Clients.Metadata]
+    Host = "localhost"
+    Port = 48081
+
+  [Clients.Logging]
+    Name = "edgex-support-logging"
+    Protocol = "http"
+    Host = "localhost"
+    Port = 48061
+
+[Device]
+  DataTransform = true
+  Discovery = false
+  InitCmd = ""
+  InitCmdArgs = ""
+  MaxCmdOps = 128
+  MaxCmdResultLen = 256
+  RemoveCmd = ""
+  RemoveCmdArgs = ""
+  ProfilesDir = ""
+  SendReadingsOnChanged = true
+
+[Driver]
+  ReceivePGNs = "61444,61443,65262,65269,65257,65270,65132"
+
+[Logging]
+  RemoteURL = ""
+  File = "./device-simple.log"
+
+[[Schedules]]
+  Name = "Schedule"
+  Frequency = "PT1S"
+
+[[ScheduleEvents]]
+  Name = "ReadEEC1"
+  Schedule = "Schedule"
+  Path = "/api/v1/device/all/EEC1"
+
+
+[[DeviceList]]
+  Name = "J1939ECU"
+  Profile = "J1939DemoBoard"
+  Description = "An Example J1939 Device"
+  Labels = [ "J1939 ECU" ]
+  [DeviceList.Addressable]
+    Address = "j1939Endpoint"
+    Port = 502
+    Protocol = "OTHER"
