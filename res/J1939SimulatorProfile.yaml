@@ -1,0 +1,189 @@
+name: "J1939DemoBoard"
+manufacturer: "OzenElecktronik"
+model: "ECU Simulator"
+description: "J1939 ECU Communication Simulator"
+labels:
+  - "simulator"
+  - "J1939"
+  - "ECU"
+
+deviceResources:
+      -
+        name: ET1
+        description: "Engine Temperature 1"
+        attributes:
+            { PGN: "65262" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: AMB
+        description: "Ambient Conditions"
+        attributes:
+            { PGN: "65269" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: LFC
+        description: "Fuel Consumption (Liquid)"
+        attributes:
+            { PGN: "65257" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: EEC1
+        description: "Electronic Engine Controller 1"
+        attributes:
+            { PGN: "61444" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: EEC2
+        description: "Electronic Engine Controller 2"
+        attributes:
+            { PGN: "61443" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: IC1
+        description: "Inlet/Exhaust Conditions 1"
+        attributes:
+            { PGN: "65270" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+      -
+        name: TCO1
+        description: "Tachograph"
+        attributes:
+            { PGN: "65132" }
+        properties:
+            value:
+                { type: "String", readWrite: "R", defaultValue: "0" }
+            units:
+                { type: "String", readWrite: "R", defaultValue: "PGN Specific" }
+
+
+resources:
+  -
+    name: ET1
+    get:
+      - { index: "1", operation: "get", object: "ET1", parameter: "ET1", property: "value" }
+  -
+    name: AMB
+    get:
+      - { index: "1", operation: "get", object: "AMB", parameter: "AMB", property: "value" }
+  -
+    name: EEC1
+    get:
+      - { index: "1", operation: "get", object: "EEC1", parameter: "EEC1", property: "value" }
+  -
+    name: EEC2
+    get:
+      - { index: "1", operation: "get", object: "EEC2", parameter: "EEC2", property: "value" }
+  -
+    name: IC1
+    get:
+      - { index: "1", operation: "get", object: "IC1", parameter: "IC1", property: "value" }
+  -
+    name: TCO1
+    get:
+      - { index: "1", operation: "get", object: "TCO1", parameter: "TCO1", property: "value" }
+
+
+commands:
+  -
+    name: ET1
+    get:
+        path: "/api/v1/device/{deviceId}/ET1"
+        responses:
+          -
+            code: "200"
+            description: "Get the ET1 reading."
+            expectedValues: ["ET1"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+  -
+    name: AMB
+    get:
+        path: "/api/v1/device/{deviceId}/AMB"
+        responses:
+          -
+            code: "200"
+            description: "Get the AMB reading."
+            expectedValues: ["AMB"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+  -
+    name: EEC1
+    get:
+        path: "/api/v1/device/{deviceId}/EEC1"
+        responses:
+          -
+            code: "200"
+            description: "Get the EEC1 reading."
+            expectedValues: ["EEC1"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+  -
+    name: EEC2
+    get:
+        path: "/api/v1/device/{deviceId}/EEC2"
+        responses:
+          -
+            code: "200"
+            description: "Get the EEC2 reading."
+            expectedValues: ["EEC2"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+  -
+    name: IC1
+    get:
+        path: "/api/v1/device/{deviceId}/IC1"
+        responses:
+          -
+            code: "200"
+            description: "Get the IC1 reading."
+            expectedValues: ["IC1"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+  -
+    name: TCO1
+    get:
+        path: "/api/v1/device/{deviceId}/TCO1"
+        responses:
+          -
+            code: "200"
+            description: "Get the TCO1 reading."
+            expectedValues: ["TCO1"]
+          -
+            code: "503"
+            description: "service unavailable"
+            expectedValues: []
+
