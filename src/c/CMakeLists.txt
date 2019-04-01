@@ -9,6 +9,10 @@ if (NOT LIBCSDK_FOUND)
   message (WARNING "csdk library or header not found")
 endif ()
 
+include_directories(
+  ../../external/LibJ1939/inc
+)
+
 # Set additional C compiler flags
 if (DEFINED CMAKE_C_COMPILER_ID)
   if (CMAKE_C_COMPILER_ID MATCHES GNU)
@@ -24,6 +28,8 @@ endif ()
 
 file (GLOB C_FILES *.c)
 find_library(EDGEX_CSDK_RELEASE_LIB NAMES csdk)
+find_library(J1939_STACK NAMES libXatJ1939.so PATHS ${CMAKE_SOURCE_DIR}/external/LibJ1939 NO_DEFAULT_PATH)
 add_executable(device-j1939 ${C_FILES})
 target_include_directories (device-j1939 PRIVATE .)
 target_link_libraries (device-j1939 PUBLIC m PRIVATE ${EDGEX_CSDK_RELEASE_LIB})
+target_link_libraries (device-j1939 PUBLIC m PRIVATE ${J1939_STACK})
