@@ -4,10 +4,6 @@ project(device_grove LANGUAGES C)
 # Package support
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package (LibMRAA REQUIRED)
-if (NOT LIBMRAA_FOUND)
-  message (WARNING "mraa library or header not found")
-endif ()
 
 find_package (Libcsdk REQUIRED)
 if (NOT LIBCSDK_FOUND)
@@ -29,7 +25,6 @@ endif ()
 
 file (GLOB C_FILES *.c)
 find_library(EDGEX_CSDK_RELEASE_LIB NAMES csdk)
-find_library(LIBMRAA_LIB NAMES mraa)
 add_executable(device-grove ${C_FILES})
 target_include_directories (device-grove PRIVATE .)
-target_link_libraries (device-grove PUBLIC m PRIVATE ${LIBMRAA_LIB} ${EDGEX_CSDK_RELEASE_LIB})
+target_link_libraries (device-grove PUBLIC m PRIVATE ${EDGEX_CSDK_RELEASE_LIB})
