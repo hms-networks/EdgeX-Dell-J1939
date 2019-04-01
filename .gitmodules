@@ -1,0 +1,3 @@
+[submodule "external/libsocketcan"]
+	path = external/libsocketcan
+	url = https://github.com/hms-networks/libsocketcan.git
