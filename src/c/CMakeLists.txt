@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(device_grove LANGUAGES C)
+project(device_j1939 LANGUAGES C)
 
 # Package support
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
@@ -25,6 +25,6 @@ endif ()
 
 file (GLOB C_FILES *.c)
 find_library(EDGEX_CSDK_RELEASE_LIB NAMES csdk)
-add_executable(device-grove ${C_FILES})
-target_include_directories (device-grove PRIVATE .)
-target_link_libraries (device-grove PUBLIC m PRIVATE ${EDGEX_CSDK_RELEASE_LIB})
+add_executable(device-j1939 ${C_FILES})
+target_include_directories (device-j1939 PRIVATE .)
+target_link_libraries (device-j1939 PUBLIC m PRIVATE ${EDGEX_CSDK_RELEASE_LIB})
