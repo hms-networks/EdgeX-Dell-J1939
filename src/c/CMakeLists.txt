@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
-project(device_j1939 LANGUAGES C)
 
 # Package support
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/src/c/cmake)
 
 
 find_package (Libcsdk REQUIRED)
