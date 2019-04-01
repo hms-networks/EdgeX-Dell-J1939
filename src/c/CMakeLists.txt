@@ -10,6 +10,7 @@ if (NOT LIBCSDK_FOUND)
 endif ()
 
 include_directories(
+  ../../external/libsocketcan/include
   ../../external/LibJ1939/inc
 )
 
