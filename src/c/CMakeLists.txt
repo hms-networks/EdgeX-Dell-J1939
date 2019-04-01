@@ -17,7 +17,7 @@ include_directories(
 # Set additional C compiler flags
 if (DEFINED CMAKE_C_COMPILER_ID)
   if (CMAKE_C_COMPILER_ID MATCHES GNU)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wstrict-prototypes -Wmissing-prototypes")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GNU_SOURCE")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
