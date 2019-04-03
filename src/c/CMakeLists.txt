@@ -12,6 +12,7 @@ endif ()
 include_directories(
   ../../external/libsocketcan/include
   ../../external/LibJ1939/inc
+  inc
 )
 
 # Set additional C compiler flags
