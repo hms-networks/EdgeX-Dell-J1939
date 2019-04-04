@@ -13,11 +13,11 @@
 
 #define ERR_CHECK(x) if (x.code) { fprintf (stderr, "Error: %d: %s\n", x.code, x.reason); return x.code; }
 
-typedef struct template_driver
+typedef struct j1939_driver
 {
   iot_logging_client * lc;
   pthread_mutex_t mutex;
-} template_driver;
+} j1939_driver;
 
 
 static sig_atomic_t running = true;
@@ -35,7 +35,7 @@ static bool template_init
   const edgex_nvpairs *config
 )
 {
-  template_driver *driver = (template_driver *) impl;
+  j1939_driver *driver = (j1939_driver *) impl;
   lc=iot_log_default;
   driver->lc = lc;
   pthread_mutex_init (&driver->mutex, NULL);
@@ -56,7 +56,7 @@ static bool template_get_handler
   edgex_device_commandresult *readings
 )
 {
-  template_driver *driver = (template_driver *) impl;
+  j1939_driver *driver = (j1939_driver *) impl;
 
   /* Access the address of the device to be accessed and log it */
   iot_log_debug(driver->lc, "GET on address: %s",devaddr->address);
@@ -84,7 +84,7 @@ static bool template_put_handler
   const edgex_device_commandresult *values
 )
 {
-  template_driver *driver = (template_driver *) impl;
+  j1939_driver *driver = (j1939_driver *) impl;
 
   /* Access the address of the device to be accessed and log it */
   iot_log_debug(driver->lc, "PUT on address: %s",devaddr->address);
@@ -115,8 +115,8 @@ int main (int argc, char *argv[])
   bool useRegistry = false;
   char *profile = "";
   char *confdir = "";
-  template_driver * impl = malloc (sizeof (template_driver));
-  memset (impl, 0, sizeof (template_driver));
+  j1939_driver * impl = malloc (sizeof (j1939_driver));
+  memset (impl, 0, sizeof (j1939_driver));
 
   int n = 1;
   while (n < argc)
