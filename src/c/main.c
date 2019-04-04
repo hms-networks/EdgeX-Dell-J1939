@@ -28,7 +28,7 @@ static void inthandler (int i)
 
 
 /* --- Initialize ---- */
-static bool template_init
+static bool j1939_init
 (
   void *impl,
   struct iot_logging_client *lc,
@@ -44,10 +44,10 @@ static bool template_init
 }
 
 /* ---- Discovery ---- */
-static void template_discover (void *impl) {}
+static void j1939_discover (void *impl) {}
 
 /* ---- Get ---- */
-static bool template_get_handler
+static bool j1939_get_handler
 (
   void *impl,
   const edgex_addressable *devaddr,
@@ -75,7 +75,7 @@ static bool template_get_handler
 }
 
 /* ---- Put ---- */
-static bool template_put_handler
+static bool j1939_put_handler
 (
   void *impl,
   const edgex_addressable *devaddr,
@@ -92,13 +92,13 @@ static bool template_put_handler
 }
 
 /* ---- Disconnect ---- */
-static bool template_disconnect (void *impl, edgex_addressable *device)
+static bool j1939_disconnect (void *impl, edgex_addressable *device)
 {
   return true;
 }
 
 /* ---- Stop ---- */
-static void template_stop (void *impl, bool force) {}
+static void j1939_stop (void *impl, bool force) {}
 
 
 static void usage (void)
@@ -155,12 +155,12 @@ int main (int argc, char *argv[])
   /* Device Callbacks */
   edgex_device_callbacks templateImpls =
   {
-    template_init,         /* Initialize */
-    template_discover,     /* Discovery */
-    template_get_handler,  /* Get */
-    template_put_handler,  /* Put */
-    template_disconnect,   /* Disconnect */
-    template_stop          /* Stop */
+    j1939_init,         /* Initialize */
+    j1939_discover,     /* Discovery */
+    j1939_get_handler,  /* Get */
+    j1939_put_handler,  /* Put */
+    j1939_disconnect,   /* Disconnect */
+    j1939_stop          /* Stop */
   };
 
   /* Initalise a new device service */
