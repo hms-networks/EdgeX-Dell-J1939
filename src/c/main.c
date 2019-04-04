@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
   /* Initalise a new device service */
   edgex_device_service *service = edgex_device_service_new
   (
-    "device-template",
+    "device-j1939",
     "1.0",
     impl,
     templateImpls,
