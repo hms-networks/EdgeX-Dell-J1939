@@ -153,7 +153,7 @@ int main (int argc, char *argv[])
   e.code = 0;
 
   /* Device Callbacks */
-  edgex_device_callbacks templateImpls =
+  edgex_device_callbacks j1939Impls =
   {
     j1939_init,         /* Initialize */
     j1939_discover,     /* Discovery */
@@ -169,7 +169,7 @@ int main (int argc, char *argv[])
     "device-j1939",
     "1.0",
     impl,
-    templateImpls,
+    j1939Impls,
     &e
   );
   ERR_CHECK (e);
