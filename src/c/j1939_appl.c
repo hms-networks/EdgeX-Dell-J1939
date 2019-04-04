@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
+#include <limits.h>
 #include "j1939_appl.h"
 #include "libsocketcan.h"
 
@@ -11,6 +13,7 @@
 static int ConfigureCan(const char *interface, uint32_t bitrate);
 static int ShutdownCan(const char *interface);
 void *readThread(void *arg);
+int configureFilters(char *pgns);
 
 //"SocketCan"
 static char sBoardtype[16] = {0x53, 0x6f, 0x63, 0x6b, 0x65, 0x74, 0x43, 0x41, 0x4e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -32,11 +35,13 @@ static pthread_t thread_id;
  * of the interface.
  * @param bool isApplCtlIfr - true if application
  * should control the interface
+ * @param char* pgns - string of comma separated
+ * pgns that should be added to the inclusive filter
  * @param iot_logging_client* lc - EdgeX logging
  * client to use for debug/error information
  * @return 0 upon success, non-zero upon error
  */
-int j1939_appl_init(bool isInterfaceControl, iot_logging_client *lc)
+int j1939_appl_init(bool isInterfaceControl, char *pgns, iot_logging_client *lc)
 {
    int retval = J1939_APPL_NO_ERROR;
    if (!isJ1939ApplRunning)
@@ -77,6 +82,12 @@ int j1939_appl_init(bool isInterfaceControl, iot_logging_client *lc)
    {
       iot_log_error(loggingClient, "J1939 application already initalized");
       retval = J1939_APPL_ERROR;
+   }
+
+   //Everything is okay and the filters can be established
+   if (retval == J1939_APPL_NO_ERROR)
+   {
+      retval = configureFilters(pgns);
    }
 
    return retval;
@@ -139,6 +150,43 @@ int J1939_Get_Rec_Msg(uint32_t pgn, J1939API_J1939MSG **msg)
    }
    iot_log_warning(loggingClient, "Message for PGN %d not found", pgn);
    return J1939_APPL_ERROR;
+}
+
+/**
+ * Parse a string containing PGNs to add to the inclusive filter list
+ * @param char *pgns - Comma separated string containing the pgns to add
+ * @return 0 upon success, non-zero upon error
+ */
+int configureFilters(char *pgns)
+{
+   int retval = J1939_APPL_NO_ERROR;
+   char *currPGN;
+   J1939API_COMMAND_SETFILTERFORJ1939 filterlist;
+   int pgnIndex = 0;
+
+   memset(filterlist.abList, 0, sizeof filterlist.abList);
+
+   currPGN = strtok(pgns, ",");
+   while (currPGN != NULL && pgnIndex < MAX_NUM_PGNS)
+   {
+      char *endChar;
+      errno = 0;
+      filterlist.abList[pgnIndex] = strtol(currPGN, &endChar, 10);
+      if ((errno == ERANGE && (filterlist.abList[pgnIndex] == LONG_MAX || filterlist.abList[pgnIndex] == LONG_MIN))
+        || (errno != 0 && filterlist.abList[pgnIndex] == 0) || !((endChar[0] == ',') || (endChar[0] == 0)))
+      {
+         iot_log_error(loggingClient, "Could not parse PGN list");
+         retval = J1939_APPL_ERROR;
+         break;
+      }
+      currPGN = strtok(NULL, ",");
+      iot_log_debug(loggingClient, "Registering j1939 filter for %d", filterlist.abList[pgnIndex]);
+      pgnIndex++;
+   }
+
+   J1939Api_SendCommand(j1939StackInst, J3939ApiCommandId_FilterJ1939, (char *)&filterlist, sizeof(filterlist));
+
+   return retval;
 }
 
 /**

@@ -14,11 +14,13 @@
  * of the interface.
  * @param bool isApplCtlIfr - true if application
  * should control the interface
+ * @param char* pgns - string of comma separated
+ * pgns that should be added to the inclusive filter
  * @param iot_logging_client* lc - EdgeX logging
  * client to use for debug/error information
  * @return 0 upon success, non-zero upon error
  */
-int j1939_appl_init(bool isApplCtlIfr, iot_logging_client *lc);
+int j1939_appl_init(bool isApplCtlIfr, char *pgns, iot_logging_client *lc);
 
 /**
  * Destroys J1939 stack instance and shuts down
