@@ -36,6 +36,7 @@
 
 [Driver]
   ReceivePGNs = "61444,61443,65262,65269,65257,65270,65132"
+  ApplControlInterface = true
 
 [Logging]
   RemoteURL = ""
