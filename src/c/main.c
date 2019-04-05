@@ -10,6 +10,7 @@
 
 #include <unistd.h>
 #include <signal.h>
+#include "j1939_appl.h"
 
 #define ERR_CHECK(x)                                        \
    if (x.code)                                              \
@@ -36,12 +37,45 @@ static bool j1939_init(
     struct iot_logging_client *lc,
     const edgex_nvpairs *config)
 {
+   char *pgnList = "";
+   bool isApplControlInterface = false;
+   bool retval = true;
    j1939_driver *driver = (j1939_driver *)impl;
    lc = iot_log_default;
    driver->lc = lc;
-   pthread_mutex_init(&driver->mutex, NULL);
-   iot_log_debug(driver->lc, "Init");
-   return true;
+
+   //Read the driver parameters
+   while (config != NULL)
+   {
+      if (strcmp(config->name, "ReceivePGNs") == 0)
+         pgnList = config->value;
+      if (strcmp(config->name, "ApplControlInterface") == 0)
+      {
+         if (strcmp(config->value, "true") == 0)
+            isApplControlInterface = true;
+         else if (strcmp(config->value, "false") == 0)
+            isApplControlInterface = false;
+         else
+         {
+            retval = false;
+            iot_log_error(driver->lc, "Invalid value for ApplControlInterface in configuration file");
+         }
+      }
+      config = config->next;
+   }
+
+   //start the J1939 application
+   if ((retval == true) && (j1939_appl_init(isApplControlInterface, pgnList, driver->lc) != J1939_APPL_NO_ERROR))
+   {
+      retval = false;
+   }
+   else
+   {
+      pthread_mutex_init(&driver->mutex, NULL);
+      iot_log_debug(driver->lc, "Init");
+   }
+
+   return retval;
 }
 
 /* ---- Discovery ---- */
@@ -95,7 +129,10 @@ static bool j1939_disconnect(void *impl, edgex_addressable *device)
 }
 
 /* ---- Stop ---- */
-static void j1939_stop(void *impl, bool force) {}
+static void j1939_stop(void *impl, bool force)
+{
+   j1939_appl_stop();
+}
 
 static void usage(void)
 {
