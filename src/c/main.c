@@ -1,6 +1,11 @@
 /*
- * Copyright (c) 2018
- * IoTech Ltd
+ * EdgeX device service for J1939 network monitoring
+ *
+ * Copyright (c) 2019
+ * HMS Networks
+ *
+ * Adapted from template.c
+ * https://github.com/edgexfoundry/device-sdk-c/blob/master/src/c/examples/template.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *
