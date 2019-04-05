@@ -10,6 +10,8 @@
 
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
+#include <limits.h>
 #include "j1939_appl.h"
 
 #define ERR_CHECK(x)                                        \
@@ -96,11 +98,45 @@ static bool j1939_get_handler(
 
    for (uint32_t i = 0; i < nreadings; i++)
    {
-      /* Drill into the attributes to differentiate between resources via the
-   * SensorType NVP */
+      /* Drill into the attributes to differentiate between resources */
       edgex_nvpairs *current = requests->devobj->attributes;
       while (current != NULL)
       {
+         if (strcmp(current->name, "PGN") == 0)
+         {
+            J1939API_J1939MSG *msg = NULL;
+            errno = 0;
+            int requestedPGN = strtol(current->value, NULL, 10);
+            if ((errno == ERANGE && (requestedPGN == LONG_MAX || requestedPGN == LONG_MIN)) || (errno != 0 && requestedPGN == 0))
+            {
+               iot_log_error(driver->lc, "Invalid PGN read");
+            }
+            else
+            {
+               if (J1939_Get_Rec_Msg(requestedPGN, &msg) == J1939_APPL_NO_ERROR)
+               {
+                  char data[2 * J1939API_MAX_MSG_SIZE + 1] = {0};
+                  for (int byteIndex = 0; byteIndex < msg->wDataLen; byteIndex++)
+                  {
+                     sprintf(&data[2 * byteIndex], "%02X", (unsigned int)msg->abData[byteIndex]);
+                  }
+
+                  //set the value type
+                  //this must be a string as EdgeX does not support byte arrays
+                  readings[i].type = String;
+
+                  //set the data value
+                  readings[i].value.string_result = &data[0];
+
+                  //set the timestamp value
+                  readings[i].origin = msg->dwTimestamp;
+               }
+               else
+               {
+                  iot_log_debug(driver->lc, "No data received for PGN: %d", requestedPGN);
+               }
+            }
+         }
          current = current->next;
       }
    }
