@@ -40,7 +40,7 @@
 
 [Logging]
   RemoteURL = ""
-  File = "./device-simple.log"
+  File = "./device-j1939.log"
 
 [[Schedules]]
   Name = "Schedule"
