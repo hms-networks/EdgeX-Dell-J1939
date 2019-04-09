@@ -1,0 +1,47 @@
+FROM alpine:3.8 as builder
+MAINTAINER Thomas Kimsey <thk@hms.se>
+
+
+RUN apk add --update --no-cache build-base git gcc g++ cmake make linux-headers yaml-dev libmicrohttpd-dev curl-dev autoconf automake libtool libpthread-stubs libc-dev libc6-compat glib-dev
+
+
+
+COPY scripts /device-j1939/scripts
+COPY src /device-j1939/src/
+COPY external /device-j1939/external/
+COPY CMakeLists.txt /device-j1939/CMakeLists.txt
+RUN mkdir -p /device-j1939/build
+
+WORKDIR /device-j1939/external/libsocketcan
+RUN ls
+RUN autoreconf --install
+RUN autoconf
+
+RUN ./configure
+WORKDIR /device-j1939/external/libsocketcan/src
+RUN make
+RUN make install
+RUN cd ../..
+
+
+RUN /device-j1939/scripts/build_deps.sh
+RUN /device-j1939/scripts/build.sh
+
+FROM alpine:3.8
+
+RUN apk add --update --no-cache linux-headers yaml libmicrohttpd curl-dev
+
+COPY --from=builder /device-j1939/build/release/src/c/device-j1939 /device-j1939/build/release/src/clibc-dev libc6-compat
+COPY --from=builder /usr/lib/libcsdk.so /usr/lib
+COPY --from=builder /usr/include/edgex /usr/include/edgex
+COPY --from=builder /usr/include/thpool.h /usr/include/thpool.h
+COPY --from=builder /usr/include/iot /usr/include/iot
+
+COPY VERSION /device-j1939/
+COPY LICENSE /device-j1939/
+COPY Attribution.txt /device-j1939/
+COPY res /device-j1939/res/
+COPY profiles /device-j1939/profiles
+
+ENTRYPOINT ["/device-j1939/build/release/src/c/device-j1939", "-c"]
+CMD ["/device-j1939/res/"]
